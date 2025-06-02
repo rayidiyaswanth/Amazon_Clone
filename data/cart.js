@@ -39,3 +39,11 @@ export function removeFromCart(productId) {
   });
   saveCart();
 }
+
+export function updateCartQuantity() {
+  let cartQuantity = 0;
+  cart.forEach(CartItem => {
+    cartQuantity += CartItem.quantity;
+  });
+  return cartQuantity;
+}

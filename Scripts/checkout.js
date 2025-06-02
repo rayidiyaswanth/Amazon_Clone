@@ -1,6 +1,9 @@
-import {cart, addToCart, removeFromCart} from '../data/cart.js';
+import {cart, addToCart, removeFromCart, updateCartQuantity, saveCart} from '../data/cart.js';
 import {products} from '../data/products.js';
 import { FormatMoney } from './utils/money.js';
+
+updateCartQuantity();
+document.querySelector('.js-checkout-cart-quantity').innerHTML = `${updateCartQuantity()} items`;
 
 let matchingItem;
 let cartSummaryHTML = ``;
@@ -33,8 +36,8 @@ cart.forEach(CartItem => {
           <span>
             Quantity: <span class="quantity-label">${CartItem.quantity}</span>
           </span>
-          <span class="update-quantity-link link-primary">
-            Update
+          <span data-product-id="${matchingItem.id}" class="update-quantity-link link-primary js-update-link">
+            Update 
           </span>
           <span data-product-id="${matchingItem.id}" class="delete-quantity-link link-primary js-delete-link">
             Delete
@@ -100,5 +103,49 @@ document.querySelectorAll('.js-delete-link')
       const cartItemContainer = document.querySelector(`.js-cart-item-container-${productId}`);
       removeFromCart(productId);
       cartItemContainer.remove();
+      updateCartQuantity();
+      document.querySelector('.js-checkout-cart-quantity').innerHTML = `${updateCartQuantity()} items`;
+    });
+  });
+
+
+
+document.querySelectorAll('.js-update-link')
+  .forEach((link) => {
+    link.addEventListener('click', () => {
+      // Prevent multiple input fields
+      if (link.querySelector('input')) return;
+      const productId = link.dataset.productId;
+      const currentQuantity = document.querySelector(`.js-cart-item-container-${productId} .quantity-label`).textContent;
+      
+      link.innerHTML = `
+        <input type="number" min="1" max="10" value="${currentQuantity}" style="width:40px; margin-right:5px;" class="js-update-input">
+        <span class="js-save-link link-primary">Save</span>
+      `;
+      
+
+      const input = link.querySelector('.js-update-input');
+      const saveBtn = link.querySelector('.js-save-link');
+
+      saveBtn.addEventListener('click', () => {
+        const newQuantity = parseInt(input.value, 10);
+        
+        // Validate input
+        if (isNaN(newQuantity) || newQuantity < 1 || newQuantity > 10) {
+          alert('Please enter a valid quantity between 1 and 10');
+          return;
+        }
+
+        cart.forEach(item => {
+          if (item.Id === productId) {
+            item.quantity = newQuantity;
+          }
+        });
+        saveCart();
+
+        
+        document.querySelector(`.js-cart-item-container-${productId} .quantity-label`).textContent = newQuantity;
+        document.querySelector('.js-checkout-cart-quantity').innerHTML = `${updateCartQuantity()} items`;
+      });
     });
   });
