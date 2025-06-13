@@ -9,13 +9,18 @@ if(!cart){
   deliveryOptionid: 2,},];
 }
 
-export function addToCart(productId, quantity) {
+export function getcartproduct(productId) {
   let machingItem;
   cart.forEach(CartItem => {
     if (CartItem.Id === productId) {
       machingItem = CartItem;
     }
   });
+  return machingItem;
+}
+
+export function addToCart(productId, quantity) {
+  let machingItem = getcartproduct(productId);
 
   if (machingItem) {
     machingItem.quantity+= quantity;
@@ -52,12 +57,7 @@ export function updateCartQuantity() {
 }
 
 export function updateDeliveryOption(productId, deliveryOptionid) {
-  let machingItem;
-  cart.forEach(CartItem => {
-    if (CartItem.Id === productId) {
-      machingItem = CartItem;
-    }
-  });
+  let machingItem = getcartproduct(productId);
 
   machingItem.deliveryOptionid = deliveryOptionid;
   saveCart();
