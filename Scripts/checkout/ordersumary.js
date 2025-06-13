@@ -1,15 +1,15 @@
 import {cart, addToCart, removeFromCart, updateCartQuantity, saveCart, updateDeliveryOption, getcartproduct} from '../../data/cart.js';
 import {products, getproduct} from '../../data/products.js';
 import { FormatMoney } from '../utils/money.js';
-import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js';
-import {deliveryOptions} from '../../data/deliveryoptions.js';
+import {deliveryOptions, getDeliveryDate} from '../../data/deliveryoptions.js';
 import { renderPaymentsumary } from './paymentsummary.js';
+import {renderCheckoutHeader} from './checkoutheader.js';
 
 
 
 export function renderOrderSummary() {
   updateCartQuantity();
-  document.querySelector('.js-checkout-cart-quantity').innerHTML = `${updateCartQuantity()} items`;
+  renderCheckoutHeader();
   let cartSummaryHTML = ``;
 
   cart.forEach(CartItem => {
@@ -17,9 +17,7 @@ export function renderOrderSummary() {
     let matchingItem = getproduct(productId);
     let deliveryOptionid = CartItem.deliveryOptionid;
     let deliveryOption = deliveryOptions.find(option => option.id === deliveryOptionid);
-    const today = dayjs();
-    const deliveryDate = today.add(deliveryOption.deliveryDays, 'day');
-    const formattedDate = deliveryDate.format('dddd, MMMM D');
+    const formattedDate = getDeliveryDate(deliveryOption.deliveryDays);
 
     cartSummaryHTML += `
     <div class="cart-item-container js-cart-item-container-${matchingItem.id}">
@@ -64,9 +62,7 @@ export function renderOrderSummary() {
   function deliveryOptionsHTML(matchingItem, CartItem){
     let deliveryOptionHTML = ``;
     deliveryOptions.forEach((deliveryOption) => {
-      const today = dayjs();
-      const deliveryDate = today.add(deliveryOption.deliveryDays, 'day');
-      const formattedDate = deliveryDate.format('dddd, MMMM D');
+      const formattedDate = getDeliveryDate(deliveryOption.deliveryDays);
       const price = deliveryOption.priceCents === 0 ? 'FREE' : `$${FormatMoney(deliveryOption.priceCents)} -`;
       const ischecked = deliveryOption.id === CartItem.deliveryOptionid ;
       deliveryOptionHTML +=
@@ -98,9 +94,7 @@ export function renderOrderSummary() {
     .forEach((link) => {
       link.addEventListener('click', () => {
         const productId = link.dataset.productId;
-        const cartItemContainer = document.querySelector(`.js-cart-item-container-${productId}`);
         removeFromCart(productId);
-        cartItemContainer.remove();
         renderOrderSummary();
         renderPaymentsumary();
       });
@@ -143,7 +137,7 @@ export function renderOrderSummary() {
       link.innerHTML = `Update`;
       
       document.querySelector(`.js-cart-item-container-${productId} .quantity-label`).textContent = newQuantity;
-      document.querySelector('.js-checkout-cart-quantity').innerHTML = `${updateCartQuantity()} items`;
+      renderCheckoutHeader();
       renderPaymentsumary();
     }
   });
