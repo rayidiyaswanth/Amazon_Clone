@@ -1,9 +1,9 @@
 import {cart} from '../../data/cart-oop.js';
 import {products, getproduct} from '../../data/products.js';
 import { FormatMoney } from '../utils/money.js';
-import {deliveryOptions, getDeliveryDate} from '../../data/deliveryoptions.js';
 import { renderPaymentsumary } from './paymentsummary.js';
 import {renderCheckoutHeader} from './checkoutheader.js';
+import { delivery } from '../../data/deliveryoptions-oop.js';
 
 
 
@@ -16,8 +16,8 @@ export function renderOrderSummary() {
     const productId = CartItem.Id;
     let matchingItem = getproduct(productId);
     let deliveryOptionid = CartItem.deliveryOptionid;
-    let deliveryOption = deliveryOptions.find(option => option.id === deliveryOptionid);
-    const formattedDate = getDeliveryDate(deliveryOption.deliveryDays);
+    let deliveryOption = delivery.deliveryOptions.find(option => option.id === deliveryOptionid);
+    const formattedDate = delivery.getDeliveryDate(deliveryOption.deliveryDays);
 
     cartSummaryHTML += `
     <div class="cart-item-container js-cart-item-container-${matchingItem.id}">
@@ -61,8 +61,8 @@ export function renderOrderSummary() {
 
   function deliveryOptionsHTML(matchingItem, CartItem){
     let deliveryOptionHTML = ``;
-    deliveryOptions.forEach((deliveryOption) => {
-      const formattedDate = getDeliveryDate(deliveryOption.deliveryDays);
+    delivery.deliveryOptions.forEach((deliveryOption) => {
+      const formattedDate = delivery.getDeliveryDate(deliveryOption.deliveryDays);
       const price = deliveryOption.priceCents === 0 ? 'FREE' : `$${FormatMoney(deliveryOption.priceCents)} -`;
       const ischecked = deliveryOption.id === CartItem.deliveryOptionid ;
       deliveryOptionHTML +=

@@ -1,7 +1,7 @@
 import { cart } from "../../data/cart-oop.js"; 
 import { FormatMoney } from "../utils/money.js";
 import { getproduct } from "../../data/products.js";
-import { getdeliveryPrice } from "../../data/deliveryoptions.js";
+import { delivery } from "../../data/deliveryoptions-oop.js";
 
 
 export function renderPaymentsumary() {
@@ -16,7 +16,7 @@ export function renderPaymentsumary() {
     const product = getproduct(cartItem.Id);
     totalItems  += cartItem.quantity;
     totalPrice += (cartItem.quantity * product.priceCents);
-    shippingCost += getdeliveryPrice(cartItem.deliveryOptionid);
+    shippingCost += delivery.getdeliveryPrice(cartItem.deliveryOptionid);
     subtotal = totalPrice + shippingCost;
     taxAmount = subtotal * taxRate;
     orderTotal = subtotal + taxAmount;
@@ -51,7 +51,7 @@ export function renderPaymentsumary() {
       <div class="payment-summary-money">$${FormatMoney(orderTotal)}</div>
     </div>
 
-    <button class="place-order-button button-primary">
+    <button class="place-order-button button-primary js-place-order-button">
       Place your order
     </button>
   `;
