@@ -1,4 +1,4 @@
-import {cart, addToCart, removeFromCart, updateCartQuantity, saveCart, updateDeliveryOption, getcartproduct} from '../../data/cart.js';
+import {cart} from '../../data/cart-oop.js';
 import {products, getproduct} from '../../data/products.js';
 import { FormatMoney } from '../utils/money.js';
 import {deliveryOptions, getDeliveryDate} from '../../data/deliveryoptions.js';
@@ -8,11 +8,11 @@ import {renderCheckoutHeader} from './checkoutheader.js';
 
 
 export function renderOrderSummary() {
-  updateCartQuantity();
+  cart.updateCartQuantity();
   renderCheckoutHeader();
   let cartSummaryHTML = ``;
 
-  cart.forEach(CartItem => {
+  cart.CartItems.forEach(CartItem => {
     const productId = CartItem.Id;
     let matchingItem = getproduct(productId);
     let deliveryOptionid = CartItem.deliveryOptionid;
@@ -94,7 +94,7 @@ export function renderOrderSummary() {
     .forEach((link) => {
       link.addEventListener('click', () => {
         const productId = link.dataset.productId;
-        removeFromCart(productId);
+        cart.removeFromCart(productId);
         renderOrderSummary();
         renderPaymentsumary();
       });
@@ -109,17 +109,24 @@ export function renderOrderSummary() {
       const productId = link.dataset.productId;
       const currentQuantity = document.querySelector(`.js-cart-item-container-${productId} .quantity-label`).textContent;
       link.innerHTML = `
-      <span class="js-update-button-${productId}">
         <input type="number" min="1" max="10" value="${currentQuantity}" style="width:40px; margin-right:5px;" class="js-update-input">
-        <span class="js-save-link link-primary">Save</span>
-      </span>`;
+        <span class="js-save-link link-primary" data-product-id="${productId}">Save</span>
+      `;
     }
     
     if (event.target.classList.contains('js-save-link')) {
       const saveBtn = event.target;
-      const link = saveBtn.closest('.js-update-link');
-      const productId = link.dataset.productId;
+      const productId = saveBtn.dataset.productId;
+      if (!productId) {
+        console.error('Could not find product ID on save button');
+        return;
+      }
+      const link = saveBtn.parentElement; 
       const input = link.querySelector('.js-update-input');
+      if (!input) {
+        console.error('Could not find input element');
+        return;
+      }
       const newQuantity = parseInt(input.value, 10);
       
       if (isNaN(newQuantity) || newQuantity < 1 || newQuantity > 10) {
@@ -127,12 +134,12 @@ export function renderOrderSummary() {
         return;
       }
       
-      cart.forEach(item => {
+      cart.CartItems.forEach(item => {
         if (item.Id === productId) {
           item.quantity = newQuantity;
         }
       });
-      saveCart();
+      cart.saveCart();
       
       link.innerHTML = `Update`;
       
@@ -146,7 +153,7 @@ export function renderOrderSummary() {
     element.addEventListener('click', () => {
       const productId = element.dataset.productId;
       const deliveryOptionId = parseInt(element.dataset.deliveryOptionId, 10);
-      updateDeliveryOption(productId, deliveryOptionId);
+      cart.updateDeliveryOption(productId, deliveryOptionId);
       renderOrderSummary();
       renderPaymentsumary()
     });

@@ -1,5 +1,5 @@
-import { updateCartQuantity } from "../../data/cart.js";
+import { cart } from "../../data/cart-oop.js";
 
 export function renderCheckoutHeader() {
-  document.querySelector('.js-checkout-cart-quantity').innerHTML = `${updateCartQuantity()} items`;
+  document.querySelector('.js-checkout-cart-quantity').innerHTML = `${cart.updateCartQuantity()} items`;
 }

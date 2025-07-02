@@ -1,9 +1,9 @@
-import {cart, addToCart, saveCart, updateCartQuantity} from '../data/cart.js';
+import {cart} from '../data/cart-oop.js';
 import {products} from '../data/products.js';
 import { FormatMoney } from './utils/money.js';
 
-updateCartQuantity();
-document.querySelector('.js-cart-quantity').innerText = updateCartQuantity();
+cart.updateCartQuantity();
+document.querySelector('.js-cart-quantity').innerText = cart.updateCartQuantity();
 
 products.forEach(product => {
   const html = `
@@ -67,9 +67,9 @@ document.querySelectorAll('.js-add-to-cart').forEach(button => {
     const quantity = Number(button.parentElement.querySelector('.js-product-quantity select').value);
     const addedToCartElem = button.parentElement.querySelector('.added-to-cart');
     
-    addToCart(productId, quantity);
-    updateCartQuantity();
-    document.querySelector('.js-cart-quantity').innerText = updateCartQuantity();
+    cart.addToCart(productId, quantity);
+    cart.updateCartQuantity();
+    document.querySelector('.js-cart-quantity').innerText = cart.updateCartQuantity();
     
 
   addedToCartElem.classList.add('visible');
