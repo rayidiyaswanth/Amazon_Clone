@@ -8,6 +8,9 @@ import { delivery } from '../../data/deliveryoptions-oop.js';
 
 
 export function renderOrderSummary() {
+  // Make cart available globally for debugging
+  window.cart = cart;
+  
   cart.updateCartQuantity();
   renderCheckoutHeader();
   let cartSummaryHTML = ``;

@@ -1,7 +1,10 @@
 import { cart } from "../../data/cart-oop.js"; 
 import { FormatMoney } from "../utils/money.js";
 import { getproduct } from "../../data/products.js";
-import { delivery } from "../../data/deliveryoptions-oop.js";
+import { delivery, Otoday } from "../../data/deliveryoptions-oop.js";
+import {orders} from "../../data/orders-oop.js";
+import { renderOrderSummary } from "./ordersumary.js";
+
 
 
 export function renderPaymentsumary() {
@@ -51,10 +54,38 @@ export function renderPaymentsumary() {
       <div class="payment-summary-money">$${FormatMoney(orderTotal)}</div>
     </div>
 
-    <button class="place-order-button button-primary js-place-order-button">
-      Place your order
+    <button class="place-order-button button-primary js-place-order-button text-decoration-none">
+      <a href="./orders.html"  style="text-decoration: none; color:#000;">Place your order</a>
+      
     </button>
   `;
   document.querySelector('.js-payment-summary').innerHTML = paymentSumaryHTML;
 
-}
+  document.querySelector('.js-place-order-button').addEventListener('click', function() {
+    if (orderTotal !== 0) {
+      let orderId = crypto.randomUUID();
+      orders.orderdetails.unshift({
+        orderId: orderId,
+        orderdate: Otoday,
+        total: FormatMoney(orderTotal),
+        orderItems: cart.CartItems.map(cartItem => {
+          const product = getproduct(cartItem.Id);
+          let deliveryOptionid = cartItem.deliveryOptionid;
+          let deliveryOption = delivery.deliveryOptions.find(option => option.id === deliveryOptionid);
+          return {
+            Id: cartItem.Id,
+            quantity: cartItem.quantity,
+            deliverydate: delivery.getDeliveryDateorder(deliveryOption.deliveryDays),
+            productName: product.name,
+            image: product.image,
+          };
+        })
+      });
+      orders.saveCart();
+      cart.CartItems = [];
+      cart.saveCart();
+      renderOrderSummary();
+      renderPaymentsumary();
+    }
+  });
+};
