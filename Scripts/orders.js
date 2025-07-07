@@ -1,5 +1,6 @@
 import { orders } from "../data/orders-oop.js";
-import { renderOrderItems } from "./checkout/checkoutheader.js";
+import { renderOrderItemsHeader } from "./checkout/checkoutheader.js";
+import { trackingData } from "../data/tracking-data.js";
 
 export function renderOrders() {
   // Clear existing content
@@ -23,7 +24,7 @@ export function renderOrders() {
 
           <div class="order-header-right-section">
             <div class="order-header-label">Order ID:</div>
-            <div>${order.orderId}</div>
+            <div>#${order.orderId}</div>
           </div>
         </div>
         <div class="order-details-grid js-order-details-${order.orderId}">
@@ -54,7 +55,7 @@ export function renderOrders() {
 
         <div class="product-actions">
           <a href="tracking.html">
-            <button class="track-package-button button-secondary">
+            <button class="track-package-button button-secondary js-track-package-button" data-order-id="${order.orderId}" data-item-id="${item.Id}">
               Track package
             </button>
           </a>
@@ -64,6 +65,27 @@ export function renderOrders() {
     document.querySelector('.js-orders-container').innerHTML += orderHTML;
     document.querySelector(`.js-order-details-${order.orderId}`).innerHTML += orderdetailsHTML;
   });
-}
-renderOrderItems();
+    // Add event listeners after all DOM elements are created
+  document.querySelectorAll('.js-track-package-button').forEach(button => {
+    button.addEventListener('click', () => {
+      const orderId = button.dataset.orderId;
+      const itemId = button.dataset.itemId;
+      let order = orders.orderdetails.find(option => option.orderId === orderId);
+      let item = order.orderItems.find(item => item.Id === itemId);
+      
+      // Store tracking data in localStorage instead of trying to reassign the constant
+      const trackingInfo = {
+        deliverydate: item.deliverydate,
+        productName: item.productName,
+        quantity: item.quantity,
+        image: item.image,
+
+      };
+      localStorage.setItem('currentTrackingItem', JSON.stringify(trackingInfo));
+    });
+  });
+};
+
+
+renderOrderItemsHeader();
 renderOrders();

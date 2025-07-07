@@ -4,6 +4,6 @@ export function renderCheckoutHeader() {
   document.querySelector('.js-checkout-cart-quantity').innerHTML = `${cart.updateCartQuantity()} items`;
 }
 
-export function renderOrderItems() {
+export function renderOrderItemsHeader() {
   document.querySelector('.js-checkout-cart-quantity').innerHTML = `${cart.updateCartQuantity()}`;
 }
