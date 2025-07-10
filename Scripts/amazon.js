@@ -1,8 +1,10 @@
 import {cart} from '../data/cart-oop.js';
-import {products, loadProducts} from '../data/products.js';
+import {products, loadProductsfetch} from '../data/products.js';
 import { FormatMoney } from './utils/money.js';
 
-loadProducts(renderproductsgrid);
+loadProductsfetch().then(() => {
+  renderproductsgrid();
+});
 
 function renderproductsgrid() {
   cart.updateCartQuantity();

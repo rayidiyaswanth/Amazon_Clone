@@ -10,19 +10,31 @@ export function getproduct(productId) {
 
 export let products = [];
 
-export function loadProducts(fun) {
-  const xhr = new XMLHttpRequest();
-  xhr.addEventListener('load' ,() => {
-    products = JSON.parse(xhr.response);
-    console.log(products);
-    fun();
-  });
+export function loadProductsfetch() {
+  const promise = fetch('https://supersimplebackend.dev/products').then(response => {
+    return response.json();
+  }).then(productsdata => {
+    products = productsdata;
+  })
 
-  xhr.open('GET', 'https://supersimplebackend.dev/products');
-  xhr.send();
+  return promise;
 };
 
-loadProducts();
+loadProductsfetch();
+
+
+// export function loadProducts(fun) {
+//   const xhr = new XMLHttpRequest();
+//   xhr.addEventListener('load' ,() => {
+//     products = JSON.parse(xhr.response);
+//     fun();
+//   });
+
+//   xhr.open('GET', 'https://supersimplebackend.dev/products');
+//   xhr.send();
+// };
+
+// loadProducts();
 
 
 
