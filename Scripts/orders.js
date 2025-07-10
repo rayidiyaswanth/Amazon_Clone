@@ -1,6 +1,5 @@
 import { orders } from "../data/orders-oop.js";
 import { renderOrderItemsHeader } from "./checkout/checkoutheader.js";
-import { trackingData } from "../data/tracking-data.js";
 
 export function renderOrders() {
   // Clear existing content

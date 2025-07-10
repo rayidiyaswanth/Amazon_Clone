@@ -6,7 +6,6 @@ import {orders} from "../../data/orders-oop.js";
 import { renderOrderSummary } from "./ordersumary.js";
 
 
-
 export function renderPaymentsumary() {
   let totalItems = 0;
   let totalPrice = 0;

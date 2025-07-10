@@ -1,10 +1,9 @@
 import {cart} from '../../data/cart-oop.js';
-import {getproduct} from '../../data/products.js';
+import {getproduct ,loadProducts} from '../../data/products.js';
 import { FormatMoney } from '../utils/money.js';
 import { renderPaymentsumary } from './paymentsummary.js';
 import {renderCheckoutHeader} from './checkoutheader.js';
 import { delivery } from '../../data/deliveryoptions-oop.js';
-
 
 
 export function renderOrderSummary() {
