@@ -15,7 +15,7 @@ export function renderPaymentsumary() {
   let orderTotal = 0;
   let subtotal = 0;
   cart.CartItems.forEach(cartItem => {
-    const product = getproduct(cartItem.Id);
+    const product = getproduct(cartItem.productId);
     totalItems  += cartItem.quantity;
     totalPrice += (cartItem.quantity * product.priceCents);
     shippingCost += delivery.getdeliveryPrice(cartItem.deliveryOptionid);
@@ -53,14 +53,17 @@ export function renderPaymentsumary() {
       <div class="payment-summary-money">$${FormatMoney(orderTotal)}</div>
     </div>
 
+    
+
     <button class="place-order-button button-primary js-place-order-button text-decoration-none">
-      <a href="./orders.html"  style="text-decoration: none; color:#000;">Place your order</a>
-      
+      Place your order
     </button>
+      
+    
   `;
   document.querySelector('.js-payment-summary').innerHTML = paymentSumaryHTML;
 
-  document.querySelector('.js-place-order-button').addEventListener('click', function() {
+  /*document.querySelector('.js-place-order-button').addEventListener('click', function() {
     if (orderTotal !== 0) {
       let orderId = crypto.randomUUID();
       orders.orderdetails.unshift({
@@ -68,11 +71,11 @@ export function renderPaymentsumary() {
         orderdate: Otoday,
         total: FormatMoney(orderTotal),
         orderItems: cart.CartItems.map(cartItem => {
-          const product = getproduct(cartItem.Id);
+          const product = getproduct(cartItem.productId);
           let deliveryOptionid = cartItem.deliveryOptionid;
           let deliveryOption = delivery.deliveryOptions.find(option => option.id === deliveryOptionid);
           return {
-            Id: cartItem.Id,
+            Id: cartItem.productId,
             quantity: cartItem.quantity,
             deliverydate: delivery.getDeliveryDateorder(deliveryOption.deliveryDays),
             productName: product.name,
@@ -86,5 +89,29 @@ export function renderPaymentsumary() {
       renderOrderSummary();
       renderPaymentsumary();
     }
-  });
+  });*/
+  document.querySelector('.js-place-order-button').addEventListener('click', async () => {
+    const response = await fetch('https://supersimplebackend.dev/orders', {
+      method: 'POST',
+      headers:{
+        'content-type': 'application/json'
+      },
+      body : JSON.stringify({
+        cart : cart.CartItems
+      })
+    });
+
+    const order1 = await response.json();
+    order1.priceCents = orderTotal;
+    order1.totalCostCents = orderTotal;
+    orders.addtoorders(order1);
+    orders.saveCart();
+    cart.CartItems = [];
+    cart.saveCart();
+    renderOrderSummary();
+    renderPaymentsumary();
+    
+    window.location.href = './orders.html';
+    });
+  
 };

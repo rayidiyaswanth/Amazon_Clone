@@ -1,4 +1,5 @@
 import { renderOrderItemsHeader } from "./checkout/checkoutheader.js";
+import { formatOrderDate } from "../data/orders-oop.js";
 
 const currentTrackingItem= JSON.parse(localStorage.getItem('currentTrackingItem'));
 
@@ -10,7 +11,7 @@ export function trackPackageButtonClickHandler(currentTrackingItem) {
     </a>
 
     <div class="delivery-date">
-      Arriving on ${currentTrackingItem.deliverydate}
+      Arriving on ${formatOrderDate(currentTrackingItem.deliverydate)}
     </div>
 
     <div class="product-info">
